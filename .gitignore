@@ -68,7 +68,9 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
+# dotenv environment variables file 
+
+#well it is already here.(the .env file) by adding this in gitignore file git will ignore/will not add the .env file into the github.
 .env
 .env.test
 

@@ -1,4 +1,5 @@
 //jshint esversion:6
+require('dotenv').config(); // import and config once and it will run forever until the server is stopped.
 const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
@@ -13,8 +14,7 @@ app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended:true}));
 
 
-const URL = 'mongodb://127.0.0.1:27017/userDB'
-mongoose.connect(URL,{useNewUrlParser:true},function(err){
+mongoose.connect(process.env.URL,{useNewUrlParser:true},function(err){
     if(!err){
         console.log('Successfully connected to the database bro!!');
     }
@@ -28,8 +28,7 @@ const userSchema = new mongoose.Schema({
     password:String
 });
 
-const mysecret = 'Thisisasecretbro!';
-userSchema.plugin(encrypt, {secret:mysecret, encryptedFields:['password']});
+userSchema.plugin(encrypt, {secret:process.env.MYSECRET, encryptedFields:['password']});
 
 const User = new mongoose.model('User',userSchema);
 

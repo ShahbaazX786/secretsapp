@@ -56,6 +56,20 @@ app.post('/register',function(req,res){
     });
 });
 
+app.post('/login', function(req,res){
+    const username = req.body.username;
+    const password= req.body.password;
+    User.findOne({email:username}, function(err,foundUser){
+        if(err){
+            console.log(err);
+        }
+        else{
+            if(password === foundUser.password){
+                res.render('secrets');
+            }
+        }
+    });
+});
 
 
 app.listen(PORT, function(err){

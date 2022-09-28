@@ -6,6 +6,8 @@ const ejs = require('ejs');
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000;
 // const encrypt = require('mongoose-encryption');
+// const bcrypt = require('bcrypt');
+// const saltRounds = 10;
 const md5 = require('md5');
 
 const app = express();
@@ -45,7 +47,7 @@ app.get('/register',function(req,res){
     res.render('register');
 });
 
-app.post('/register',function(req,res){
+app.post('/register',function(req,res){ //f bcrypt used to work i would replace this method with commented bcrypt method commented below.
     const newUser = new User({
         email:req.body.username,
         password:md5(req.body.password) //hashing at registration and saving to database.
@@ -86,3 +88,43 @@ app.listen(PORT, function(err){
     }
         
 });
+
+
+
+// i tried to use bcrypt to use salting concept but bcrypt was being sassy and not getting installed correctly in node version 18+ so i just implemented the code for practice
+// i can use nvm but i will pass for now.
+
+
+// app.post('/register',function(req,res){ 
+//     bcrypt.hash(req.body.password, saltRounds, function(err,hash){
+//         const newUser = new User({
+//             email:req.body.username,
+//             password:hash  //bcrypt hash is a very good replacement of md5.
+//         });
+//         newUser.save(function(err){
+//             if(!err){
+//                 res.render('secrets');
+//             }
+//             else{
+//                 console.log(err);
+//             }
+//         });
+//     })
+// });
+
+// app.post('/login', function(req,res){
+//     const username = req.body.username;
+//     const password= req.body.password; 
+//     User.findOne({email:username}, function(err,foundUser){
+//         if(err){
+//             console.log(err);
+//         }
+//         else{
+//             bcrypt.compare(password,foundUser.password,function(err,result){
+//                 if(result === true){
+//                     res.render('secrets');
+//                 }
+//             });
+//         }
+//     });
+// });

@@ -48,7 +48,7 @@ app.get('/register',function(req,res){
 app.post('/register',function(req,res){
     const newUser = new User({
         email:req.body.username,
-        password:md5(req.body.password)
+        password:md5(req.body.password) //hashing at registration and saving to database.
     });
     newUser.save(function(err){
         if(!err){
@@ -62,7 +62,7 @@ app.post('/register',function(req,res){
 
 app.post('/login', function(req,res){
     const username = req.body.username;
-    const password= md5(req.body.password);
+    const password= md5(req.body.password); //hashing at login
     User.findOne({email:username}, function(err,foundUser){
         if(err){
             console.log(err);

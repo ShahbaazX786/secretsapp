@@ -22,6 +22,13 @@ mongoose.connect(URL,{useNewUrlParser:true},function(err){
     }
 });
 
+const userSchema = new mongoose.Schema({
+    email:String,
+    password:String
+});
+
+const User = new mongoose.model('User',userSchema);
+
 
 app.get('/',function(req,res){
     res.render('home');

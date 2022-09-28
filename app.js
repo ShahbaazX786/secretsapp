@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
+const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000;
 
 const app = express();
@@ -9,6 +10,18 @@ const app = express();
 app.use(express.static('public'));
 app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended:true}));
+
+
+const URL = 'mongodb://127.0.0.1:27017/userDB'
+mongoose.connect(URL,{useNewUrlParser:true},function(err){
+    if(!err){
+        console.log('Successfully connected to the database bro!!');
+    }
+    else{
+        console.log('There seems to be a problem while connecting to the DB!'+err);
+    }
+});
+
 
 app.get('/',function(req,res){
     res.render('home');

@@ -13,7 +13,8 @@ const session = require('express-session');
 const passport = require('passport');
 const passportLocalMongoose = require('passport-local-mongoose');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const findOrCreate = require('mongoose-findorcreate');
+const findOrCreate = require('mongoose-findorcreate')
+
 
 
 
@@ -46,11 +47,12 @@ mongoose.connect(process.env.URL,{useNewUrlParser:true},function(err){
 
 const userSchema = new mongoose.Schema({
     email:String,
-    password:String
+    password:String,
+    googleId:String
 });
 
 userSchema.plugin(passportLocalMongoose); //useful for salting and hashing the schema and storing it into the db.
-userSchema.plugin(mongoose-findOrCreate);
+userSchema.plugin(findOrCreate);
 
 // userSchema.plugin(encrypt, {secret:process.env.MYSECRET, encryptedFields:['password']});
 

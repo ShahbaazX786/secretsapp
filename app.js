@@ -89,6 +89,14 @@ app.get('/secrets',function(req,res){ //this mehod makes sure that you are visit
     }
 });
 
+app.get('/logout', function(req, res){
+    req.logout(function(err){ // this function is now async and now it requires a callback func to report the status, else it will not work.
+        if(err){
+            console.log(err);
+        }
+    });
+    res.redirect('/');
+});
 
 
 

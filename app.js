@@ -48,7 +48,8 @@ mongoose.connect(process.env.URL,{useNewUrlParser:true},function(err){
 const userSchema = new mongoose.Schema({
     email:String,
     password:String,
-    googleId:String
+    googleId:String,
+    secret:String
 });
 
 userSchema.plugin(passportLocalMongoose); //useful for salting and hashing the schema and storing it into the db.
@@ -122,12 +123,20 @@ app.get('/register',function(req,res){
 });
 
 app.get('/secrets',function(req,res){ //this mehod makes sure that you are visiting secrets page only if you have already been authenticated.
-    if(req.isAuthenticated()){
-        res.render('secrets');
-    }
-    else{
-        res.redirect('/login'); // if not authenticated or session is closed/expired then login again.
-    }
+    User.find({'secret':{$ne:null}}, function(err, foundUsers){
+        if(err){
+            console.log(err);
+        }
+        else if(foundUsers){
+            res.render('secrets',{usersWithSecrets:foundUsers});
+        }
+    });
+    // if(req.isAuthenticated()){
+    //     res.render('secrets');
+    // }
+    // else{
+    //     res.redirect('/login'); // if not authenticated or session is closed/expired then login again.
+    // }
 });
 
 app.get('/logout', function(req, res){
@@ -137,6 +146,32 @@ app.get('/logout', function(req, res){
         }
     });
     res.redirect('/');
+});
+
+app.get('/submit', function(req,res){
+    if(req.isAuthenticated()){
+        res.render('submit');
+    }
+    else{
+        res.redirect('/login');
+    }
+});
+
+app.post('/submit', function(req,res){
+    const submittessecret = req.body.secret;
+    User.findById(req.body.id, function(err, foundUser){
+        if(err){
+            console.log(err);
+        }
+        else{
+            if(foundUser){
+                foundUser.secret = submittessecret;
+                foundUser.save(function(){
+                    res.redirect('/secrets');
+                });
+            }
+        }
+    });
 });
 
 

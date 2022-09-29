@@ -64,7 +64,7 @@ app.get('/',function(req,res){
 
 app.get('/login',function(req,res){ //if user is already authenticated then it is meaning less to send him again to the login page so send him to secrets page instead.
     if(req.isAuthenticated()){
-        res.render('secrets');
+        res.redirect('secrets');
     }
     else{
         res.render('login');
@@ -72,7 +72,12 @@ app.get('/login',function(req,res){ //if user is already authenticated then it i
 });
 
 app.get('/register',function(req,res){
-    res.render('register');
+    if(req.isAuthenticated()){
+        res.redirect('secrets');
+    }
+    else{
+        res.render('register');
+    }
 });
 
 app.get('/secrets',function(req,res){ //this mehod makes sure that you are visiting secrets page only if you have already been authenticated.
@@ -83,6 +88,8 @@ app.get('/secrets',function(req,res){ //this mehod makes sure that you are visit
         res.redirect('/login'); // if not authenticated or session is closed/expired then login again.
     }
 });
+
+
 
 
 // app.post('/register',function(req,res){ //f bcrypt used to work i would replace this method with commented bcrypt method commented below.

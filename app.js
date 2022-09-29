@@ -13,6 +13,7 @@ const session = require('express-session');
 const passport = require('passport');
 const passportLocalMongoose = require('passport-local-mongoose');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const findOrCreate = require('mongoose-findorcreate');
 
 
 
@@ -49,15 +50,29 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.plugin(passportLocalMongoose); //useful for salting and hashing the schema and storing it into the db.
+userSchema.plugin(mongoose-findOrCreate);
 
 // userSchema.plugin(encrypt, {secret:process.env.MYSECRET, encryptedFields:['password']});
 
 const User = new mongoose.model('User',userSchema);
 
 passport.use(User.createStrategy()); // this will handle authenticatoin itseems.
-passport.serializeUser(User.serializeUser()); // it will create cookie and adds the userinfo into the cookie.
-passport.deserializeUser(User.deserializeUser()); //it will destroy cookie and retrieves the info from cookie so that we can use the info to authenticate the user on our server.
-// serializeUser and deserializeUser are only necessary when you are working with sessions
+
+// this below commented section is mongoose implementation of passport methods and they are only working for local strategies but not with other strateies like outh2 google etc,
+// passport.serializeUser(User.serializeUser()); // it will create cookie and adds the userinfo into the cookie.
+// passport.deserializeUser(User.deserializeUser()); //it will destroy cookie and retrieves the info from cookie so that we can use the info to authenticate the user on our server.
+// // serializeUser and deserializeUser are only necessary when you are working with sessions
+
+// so using the passport's own cookie creator method(serializer) and cookie destroyer method (deseralizer)
+passport.serializeUser(function(user,done){
+    done(null,user.id);
+});
+passport.deserializeUser(function(id,done){
+    User.findById(id, function(err, user){
+        done(err, user);
+    });
+});
+
 
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
@@ -76,6 +91,15 @@ passport.use(new GoogleStrategy({
 app.get('/',function(req,res){
     res.render('home');
 });
+
+app.get('/auth/google', function(req,res){
+    passport.authenticate('google',{scope:['profile']});
+});
+
+app.get('/auth/google/secrets', passport.authenticate('google', {failureRedirect:'/login'}), function(req,res){
+    res.redirect('/secrets');
+});
+
 
 app.get('/login',function(req,res){ //if user is already authenticated then it is meaning less to send him again to the login page so send him to secrets page instead.
     if(req.isAuthenticated()){

@@ -10,3 +10,4 @@
 
 Due to the Yu Angela course being 2018 ish so, its kinda expected that some of the components/packages/libs will get deprecated and there may or may not be a better solution. 
 so just grasp the concept and retry in google.
+There seems to be some problem at my side of understanding, gotta redo this oauth with a clean view to understand and find the error again.
